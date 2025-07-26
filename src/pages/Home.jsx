@@ -137,6 +137,49 @@ function Home()  {
       <WhySpectra/>
       <Industries/>
       <Process/>
+            {/* Testimonials Section */}
+        <section className="bg-white py-20 px-6 text-center text-gray-800">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#00477B] mb-12">
+            What Our Clients Say
+        </h2>
+
+        <div className="max-w-4xl mx-auto space-y-12">
+            {[
+            {
+                name: "Ada N.",
+                company: "HiPrep EdTech",
+                quote:
+                "Working with Binary has been transformative. Their AI-driven solutions helped us scale our product faster and smarter.",
+            },
+            {
+                name: "James O.",
+                company: "FinTrust Microfinance",
+                quote:
+                "The engineering excellence and cloud stability we received from Spectra has made our platform 10x more reliable.",
+            },
+            {
+                name: "Ngozi U.",
+                company: "HealthStack Africa",
+                quote:
+                "Binary's team brought deep domain knowledge and innovation to our healthtech deployment. Highly recommend.",
+            },
+            ].map((testimonial, index) => (
+            <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.2 }}
+                className="bg-[#F0F9FF] rounded-xl p-8 shadow"
+            >
+                <p className="text-lg italic text-gray-700 mb-4">"{testimonial.quote}"</p>
+                <h4 className="text-[#00477B] font-semibold text-lg">
+                — {testimonial.name}, <span className="text-sm text-gray-600">{testimonial.company}</span>
+                </h4>
+            </motion.div>
+            ))}
+        </div>
+        </section>
+
     </>
     
   );
