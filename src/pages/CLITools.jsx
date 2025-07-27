@@ -88,7 +88,8 @@ const CliTools = () => {
       {/* CLI Docs Link */}
       <div className="text-center">
         <Link
-          to="/docs/cli"
+          href="/cli"
+          to="/docs"
           className="inline-block bg-[#00477B] text-white font-medium px-6 py-3 rounded-md hover:bg-[#00345d] transition"
         >
           View Full CLI Documentation

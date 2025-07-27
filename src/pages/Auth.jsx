@@ -1,15 +1,20 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { FaLock, FaUserPlus } from "react-icons/fa";
 import { auth, googleProvider } from "../auth/firebaseConfig";
 import {
   signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-
+  updateProfile,
 } from "firebase/auth";
 import toast from "react-hot-toast";
 
 const Auth = () => {
+  const navigate = useNavigate();
+
   const [mode, setMode] = useState("login");
   const [showReset, setShowReset] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -25,8 +30,42 @@ const Auth = () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       toast.success(`Welcome ${result.user.displayName}`);
+      navigate("/dashboard/home");
     } catch (err) {
       toast.error("Google sign-in failed");
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      await signInWithEmailAndPassword(auth, form.email, form.password);
+      toast.success("Login successful");
+      navigate("/dashboard/home");
+    } catch (err) {
+      toast.error("Login failed");
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
+      await updateProfile(userCredential.user, {
+        displayName: form.fullName,
+      });
+      toast.success("Account created!");
+      navigate("/dashboard/home");
+    } catch (err) {
+      toast.error("Sign up failed");
       console.log(err);
     } finally {
       setLoading(false);
@@ -130,6 +169,7 @@ const Auth = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4 }}
               className="space-y-6"
+              onSubmit={handleLogin}
             >
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">Email</label>
@@ -193,6 +233,7 @@ const Auth = () => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.4 }}
               className="space-y-6"
+              onSubmit={handleRegister}
             >
               <div>
                 <label className="block mb-1 text-sm font-medium text-gray-700">Full Name</label>
