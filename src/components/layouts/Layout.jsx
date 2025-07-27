@@ -2,13 +2,13 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./Header";
-import Sidebar from "./Sidebar";
+// import Sidebar from "./Sidebar";
 
 const Layout = ({ children }) => {
   return (
     <div className="min-h-screen bg-[#F4F7FA] text-gray-800">
       {/* Fixed Sidebar */}
-      <Sidebar />
+      {/* <Sidebar /> */}
 
       {/* Main Content Area */}
       <div className="ml-64">
