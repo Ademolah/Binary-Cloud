@@ -16,6 +16,7 @@ const Auth = () => {
       toast.success(`Welcome ${result.user.displayName}`);
     } catch (err) {
       toast.error("Google sign-in failed");
+      console.log(err)
     } finally {
       setLoading(false);
     }
