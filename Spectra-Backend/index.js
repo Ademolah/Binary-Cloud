@@ -4,6 +4,7 @@ const express = require('express')
 const connectDB = require('./config/db')
 const cors = require('cors')
 const authRoutes = require('./routes/auth-routes')
+const userRoutes = require('./routes/user-routes')
 const mongoose = require('mongoose')
 
 
@@ -27,6 +28,7 @@ mongoose.connect(process.env.MONGO_URL, {
 
 
 app.use('/api/auth', authRoutes)
+app.use('/api/user', userRoutes )
 
 app.listen(4000, ()=>{
     console.log('Server is now running on port 4000'); 

@@ -2,17 +2,18 @@
 const express = require("express");
 const router = express.Router();
 const { register, login } = require("../controllers/auth-controllers");
-const protect = require('../middleware/authMiddleware')
+
+
 
 router.post("/register", register);
 router.post("/login", login);
 
 // Test protected route
-router.get('/protected', protect, (req, res) => {
-  res.json({
-    message: 'Access granted to protected route',
-    user: req.user
-  });
-});
+// router.get('/protected', protect, (req, res) => {
+//   res.json({
+//     message: 'Access granted to protected route',
+//     user: req.user
+//   });
+// });
 
 module.exports = router;
