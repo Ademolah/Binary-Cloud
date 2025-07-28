@@ -33,14 +33,14 @@ const Billing = () => {
       expiry: "08/26",
     },
   ]);
-  const [newCard, setNewCard] = useState({ name: "", number: "", expiry: "", cvv:"" });
+  const [newCard, setNewCard] = useState({ name: "", number: "", expiry: ""});
   const [editingCardId, setEditingCardId] = useState(null);
 
   const handleAddCard = () => {
     if (newCard.name && newCard.number && newCard.expiry && newCard.cvv) {
       const masked = `**** **** **** ${newCard.number.slice(-4)}`;
       setCards([...cards, { ...newCard, number: masked, id: Date.now() }]);
-      setNewCard({ name: "", number: "", expiry: "", cvv:"" });
+      setNewCard({ name: "", number: "", expiry: ""});
     }
   };
 
@@ -197,13 +197,6 @@ const Billing = () => {
               placeholder="Expiry Date (MM/YY)"
               value={newCard.expiry}
               onChange={(e) => setNewCard({ ...newCard, expiry: e.target.value })}
-              className="border px-4 py-2 rounded-md focus:ring-2 focus:ring-[#00477B] outline-none"
-            />
-            <input
-              type="text"
-              placeholder="CVV"
-              value={newCard.cvv}
-              onChange={(e) => setNewCard({ ...newCard, cvv: e.target.value })}
               className="border px-4 py-2 rounded-md focus:ring-2 focus:ring-[#00477B] outline-none"
             />
           </div>

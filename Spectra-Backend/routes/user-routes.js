@@ -5,6 +5,6 @@ const express = require("express");
 const router = express.Router();
 
 router.get('/profile', authMiddleware, getUserProfile)
-router.put('/updateProfile', authMiddleware, updateProfile)
+router.put('/profile', authMiddleware, updateProfile)
 
 module.exports = router
