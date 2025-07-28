@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -5,12 +6,10 @@ import { FaLock, FaUserPlus } from "react-icons/fa";
 import { auth, googleProvider } from "../auth/firebaseConfig";
 import {
   signInWithPopup,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   sendPasswordResetEmail,
-  updateProfile,
 } from "firebase/auth";
 import toast from "react-hot-toast";
+import axios from "../api/axiosInstance"; // your axios config with baseURL
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -33,7 +32,7 @@ const Auth = () => {
       navigate("/dashboard/home");
     } catch (err) {
       toast.error("Google sign-in failed");
-      console.log(err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -43,12 +42,20 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(auth, form.email, form.password);
-      toast.success("Login successful");
-      navigate("/dashboard/home");
+      const res = await axios.post("/auth/login", {
+        email: form.email,
+        password: form.password,
+      });
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+        toast.success("Login successful");
+        navigate("/dashboard/home");
+      } else {
+        throw new Error("No token received");
+      }
     } catch (err) {
-      toast.error("Login failed");
-      console.log(err);
+      toast.error(err.response?.data?.message || "Login failed");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -58,15 +65,23 @@ const Auth = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const userCredential = await createUserWithEmailAndPassword(auth, form.email, form.password);
-      await updateProfile(userCredential.user, {
-        displayName: form.fullName,
+      const res = await axios.post("/auth/register", {
+        fullName: form.fullName,
+        email: form.email,
+        password: form.password,
       });
-      toast.success("Account created!");
-      navigate("/dashboard/home");
+      console.log("Register response:", res.data);
+
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token);
+        toast.success("Account created!");
+        navigate("/dashboard/home");
+      } else {
+        throw new Error("No token received");
+      }
     } catch (err) {
-      toast.error("Sign up failed");
-      console.log(err);
+      toast.error(err.response?.data?.message || "Sign up failed");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -87,7 +102,7 @@ const Auth = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#F0F9FF] pt-24 px-6">
       <div className="w-full max-w-5xl bg-white shadow-2xl rounded-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2">
-        {/* Branding Section */}
+        {/* Branding */}
         <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-br from-[#00477B] to-[#50D6FE] text-white p-10">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
@@ -104,7 +119,6 @@ const Auth = () => {
 
         {/* Auth Form */}
         <div className="p-8 sm:p-10 flex flex-col justify-center">
-          {/* Toggle Tabs */}
           {!showReset && (
             <div className="flex justify-center mb-8">
               <button
@@ -126,7 +140,6 @@ const Auth = () => {
             </div>
           )}
 
-          {/* Forgot Password View */}
           {showReset ? (
             <motion.form
               key="reset"
@@ -148,10 +161,7 @@ const Auth = () => {
                   required
                 />
               </div>
-              <button
-                type="submit"
-                className="w-full bg-[#00477B] hover:bg-[#00345d] text-white font-semibold py-2 rounded-md transition"
-              >
+              <button type="submit" className="w-full bg-[#00477B] hover:bg-[#00345d] text-white font-semibold py-2 rounded-md transition">
                 Send Reset Link
               </button>
               <button
@@ -206,10 +216,7 @@ const Auth = () => {
                   Forgot password?
                 </button>
               </div>
-              <button
-                type="submit"
-                className="w-full bg-[#00477B] hover:bg-[#00345d] text-white font-semibold py-2 rounded-md transition"
-              >
+              <button type="submit" onClick={handleLogin} className="w-full bg-[#00477B] hover:bg-[#00345d] text-white font-semibold py-2 rounded-md transition">
                 Sign In
               </button>
               <button
@@ -218,11 +225,7 @@ const Auth = () => {
                 disabled={loading}
                 className="w-full mt-3 flex items-center justify-center gap-2 border border-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-50 transition"
               >
-                <img
-                  src="https://www.svgrepo.com/show/475656/google-color.svg"
-                  alt="Google"
-                  className="w-5 h-5"
-                />
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
                 Continue with Google
               </button>
             </motion.form>
@@ -267,10 +270,7 @@ const Auth = () => {
                   required
                 />
               </div>
-              <button
-                type="submit"
-                className="w-full bg-[#00477B] hover:bg-[#00345d] text-white font-semibold py-2 rounded-md transition"
-              >
+              <button type="submit" onClick={handleRegister} className="w-full bg-[#00477B] hover:bg-[#00345d] text-white font-semibold py-2 rounded-md transition">
                 Create Account
               </button>
               <button
@@ -279,11 +279,7 @@ const Auth = () => {
                 disabled={loading}
                 className="w-full mt-3 flex items-center justify-center gap-2 border border-gray-300 text-gray-700 py-2 rounded-md hover:bg-gray-50 transition"
               >
-                <img
-                  src="https://www.svgrepo.com/show/475656/google-color.svg"
-                  alt="Google"
-                  className="w-5 h-5"
-                />
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
                 Sign up with Google
               </button>
             </motion.form>

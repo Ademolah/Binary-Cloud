@@ -13,7 +13,11 @@ connectDB()
 
 const app = express()
 
-app.use(cors())
+app.use(cors({
+  origin: "http://localhost:3000", // ✅ use your frontend origin explicitly
+  credentials: true,               // ✅ allow credentials (cookies, auth headers)
+}));
+
 app.use(express.json())
 
 mongoose.connect(process.env.MONGO_URL, {

@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 
 const JWT_SECRET = process.env.JWT_SECRET ;
 
+
+
 exports.register = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
@@ -26,11 +28,27 @@ exports.register = async (req, res) => {
 
     await newUser.save();
 
-    res.status(201).json({ message: "User registered successfully.", newUser });
+    // Generate token
+    const token = jwt.sign(
+      { id: newUser._id, email: newUser.email },
+      JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.status(201).json({
+      token, 
+      user: {
+        id: newUser._id,
+        email: newUser.email,
+        fullName: newUser.fullName,
+      },
+    });
   } catch (err) {
-    res.status(500).json({ message: "Server error during registration.", err });
+    console.error("Registration Error:", err);
+    res.status(500).json({ message: "Server error during registration." });
   }
 };
+
 
 exports.login = async (req, res) => {
   try {

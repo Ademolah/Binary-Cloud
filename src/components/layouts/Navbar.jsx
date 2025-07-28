@@ -21,7 +21,7 @@ const Navbar = () => {
         {/* Logo */}
         <Link to="/" className="text-xl font-bold text-[#00477B] flex items-center gap-2">
           {/* <img src={logo} alt="Spectra" className="h-8 w-auto" /> */}
-          <img alt="Spectra" className="h-8 w-auto" />
+          {/* <img alt="Spectra" className="h-8 w-auto" /> */}
           Spectra
         </Link>
 
