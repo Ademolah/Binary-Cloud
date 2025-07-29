@@ -6,6 +6,7 @@ const cors = require('cors')
 const authRoutes = require('./routes/auth-routes')
 const userRoutes = require('./routes/user-routes')
 const billingRoutes = require('./routes/billing-routes')
+const subscriptionRoutes = require('./routes/subscription-routes')
 const mongoose = require('mongoose')
 
 
@@ -31,6 +32,7 @@ mongoose.connect(process.env.MONGO_URL, {
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes )
 app.use('/api/billing', billingRoutes)
+app.use('/api/subscriptions', subscriptionRoutes)
 
 app.listen(4000, ()=>{
     console.log('Server is now running on port 4000'); 
