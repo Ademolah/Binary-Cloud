@@ -37,7 +37,7 @@ const Billing = () => {
   const [editingCardId, setEditingCardId] = useState(null);
 
   const handleAddCard = () => {
-    if (newCard.name && newCard.number && newCard.expiry && newCard.cvv) {
+    if (newCard.name && newCard.number && newCard.expiry ) {
       const masked = `**** **** **** ${newCard.number.slice(-4)}`;
       setCards([...cards, { ...newCard, number: masked, id: Date.now() }]);
       setNewCard({ name: "", number: "", expiry: ""});
