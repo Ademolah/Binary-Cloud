@@ -40,7 +40,7 @@ const Deployments = () => {
   const handleDeploy = async () => {
     try {
       setLoading(true);
-      await axios.post("/deployments", form);
+      await axios.post("/deployment", form);
       toast.success("Deployment started!");
       setForm({ projectName: "", domain: "", framework: "React", environment: "Production" });
       setShowForm(false);

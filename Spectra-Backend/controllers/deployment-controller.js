@@ -2,9 +2,47 @@
 const Deployment = require("../models/Deployment");
 
 // Create a new deployment
+// exports.createDeployment = async (req, res) => {
+//   try {
+//     const { projectName, framework, environment, domain } = req.body;
+
+//     const existing = await Deployment.findOne({ domain });
+//     if (existing) {
+//       return res.status(400).json({ message: "Domain is already in use" });
+//     }
+
+//     const deployment = new Deployment({
+//       user: req.user._id,
+//       projectName,
+//       framework,
+//       environment,
+//       domain,
+//       status: "building",
+//       buildLogs: ["Initializing build process..."],
+//     });
+
+//     await deployment.save();
+//     res.status(201).json({ message: "Deployment created", deployment });
+//   } catch (err) {
+//     console.error("Create Deployment Error:", err.message);
+//     res.status(500).json({ message: "Failed to create deployment" });
+//   }
+// };
+
 exports.createDeployment = async (req, res) => {
   try {
     const { projectName, framework, environment, domain } = req.body;
+
+    console.log("Incoming deployment request:", {
+      projectName,
+      framework,
+      environment,
+      domain,
+    });
+
+    if (!req.user || !req.user._id) {
+      return res.status(401).json({ message: "Unauthorized. User not found." });
+    }
 
     const existing = await Deployment.findOne({ domain });
     if (existing) {
@@ -22,12 +60,16 @@ exports.createDeployment = async (req, res) => {
     });
 
     await deployment.save();
-    res.status(201).json({ message: "Deployment created", deployment });
+    return res.status(201).json({ message: "Deployment created", deployment });
+
   } catch (err) {
-    console.error("Create Deployment Error:", err.message);
-    res.status(500).json({ message: "Failed to create deployment" });
+    console.error("Create Deployment Error:", err);
+    return res.status(500).json({ message: "Failed to create deployment", error: err.message });
   }
 };
+
+
+
 
 // Get all deployments for current user
 exports.getUserDeployments = async (req, res) => {
