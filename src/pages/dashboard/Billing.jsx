@@ -192,7 +192,57 @@ const handlePlanSelect = async (selectedPlan) => {
         </button>
       </motion.div>
 
-      {/* Subscription Management */}
+      {/* Pricing Plans Reference */}
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.6 }}
+  className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10"
+>
+  {[
+    {
+      title: "Free",
+      price: "$0",
+      features: ["1 Project", "Community Support", "Limited Usage"],
+      popular: false,
+    },
+    {
+      title: "Pro",
+      price: "$29",
+      features: ["10 Projects", "Email Support", "Unlimited Usage"],
+      popular: true,
+    },
+    {
+      title: "Enterprise",
+      price: "Custom",
+      features: ["Unlimited Projects", "Priority Support", "Advanced Controls"],
+      popular: false,
+    },
+  ].map((plan, i) => (
+    <div
+      key={i}
+      className={`border rounded-xl p-6 bg-white shadow-md ${
+        plan.popular ? "border-[#00477B]" : "border-gray-200"
+      }`}
+    >
+      {plan.popular && (
+        <div className="text-sm mb-2 text-[#00477B] font-semibold">Most Popular</div>
+      )}
+      <h3 className="text-xl font-bold text-[#00477B] mb-2">{plan.title}</h3>
+      <p className="text-2xl font-bold text-gray-900 mb-4">{plan.price}/mo</p>
+      <ul className="text-sm text-gray-600 mb-4 space-y-2">
+        {plan.features.map((feature, idx) => (
+          <li key={idx}>• {feature}</li>
+        ))}
+      </ul>
+      <button className="w-full py-2 px-4 bg-[#00477B] text-white rounded-md hover:bg-[#00345d] transition text-sm">
+        Choose {plan.title}
+      </button>
+    </div>
+  ))}
+</motion.div>
+
+
 {/* Subscription Management */}
 <motion.div
   initial={{ opacity: 0, y: 10 }}
