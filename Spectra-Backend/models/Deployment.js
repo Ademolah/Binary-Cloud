@@ -24,7 +24,7 @@ const DeploymentSchema = new mongoose.Schema(
     domain: {
       type: String,
       required: true,
-      unique: true,
+      unique: false,
     },
     status: {
       type: String,

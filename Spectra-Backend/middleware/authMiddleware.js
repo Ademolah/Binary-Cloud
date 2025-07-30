@@ -17,7 +17,7 @@ const authMiddleware = async (req, res, next) => {
   let decoded;
   try {
     decoded = jwt.verify(token, JWT_SECRET);
-    console.log("Decoded JWT:", decoded);
+    // console.log("Decoded JWT:", decoded);
   } catch (err) {
     console.error("JWT Verification Failed:", err.message);
     return res.status(401).json({ message: 'Token is invalid or expired' });

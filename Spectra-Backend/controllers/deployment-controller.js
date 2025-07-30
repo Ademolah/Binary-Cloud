@@ -1,33 +1,7 @@
 // controllers/deploymentController.js
 const Deployment = require("../models/Deployment");
 
-// Create a new deployment
-// exports.createDeployment = async (req, res) => {
-//   try {
-//     const { projectName, framework, environment, domain } = req.body;
 
-//     const existing = await Deployment.findOne({ domain });
-//     if (existing) {
-//       return res.status(400).json({ message: "Domain is already in use" });
-//     }
-
-//     const deployment = new Deployment({
-//       user: req.user._id,
-//       projectName,
-//       framework,
-//       environment,
-//       domain,
-//       status: "building",
-//       buildLogs: ["Initializing build process..."],
-//     });
-
-//     await deployment.save();
-//     res.status(201).json({ message: "Deployment created", deployment });
-//   } catch (err) {
-//     console.error("Create Deployment Error:", err.message);
-//     res.status(500).json({ message: "Failed to create deployment" });
-//   }
-// };
 
 exports.createDeployment = async (req, res) => {
   try {
@@ -113,6 +87,31 @@ exports.updateDeployment = async (req, res) => {
   }
 };
 
+exports.redeployDeployment = async (req, res) => {
+  try {
+    const deployment = await Deployment.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+
+    if (!deployment) {
+      return res.status(404).json({ message: "Deployment not found" });
+    }
+
+    // Simulate redeployment
+    deployment.status = "building";
+    deployment.buildLogs = ["Redeployment started...", "Rebuilding..."];
+    deployment.deployedAt = null;
+    await deployment.save();
+
+    res.json({ message: "Redeployment triggered", deployment });
+  } catch (err) {
+    res.status(500).json({ message: "Redeployment failed" });
+  }
+};
+
+
+
 // Optional: Delete deployment
 exports.deleteDeployment = async (req, res) => {
   try {
@@ -124,3 +123,31 @@ exports.deleteDeployment = async (req, res) => {
     res.status(500).json({ message: "Error deleting deployment" });
   }
 };
+
+// controllers/deploymentController.js
+
+exports.checkDomainAvailability = async (req, res) => {
+    console.log("🚀 checkDomainAvailability hit")
+  try {
+    const { domain } = req.query;
+
+    if (!domain) {
+      return res.status(400).json({ message: "Domain query is required" });
+    }
+
+    const existing = await Deployment.findOne({ domain });
+
+    res.json({ available: !existing });
+  } catch (err) { 
+    // res.status(500).json({ message: "Error fetching deployment here" });
+    console.error("Domain check error:", err.message);
+  }
+};
+
+
+
+
+
+
+
+

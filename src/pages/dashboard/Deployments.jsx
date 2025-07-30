@@ -34,6 +34,9 @@ const Deployments = () => {
   const [loading, setLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [logsOpenId, setLogsOpenId] = useState(null);
+  const [domain, setDomain] = useState("");
+  const [domainStatus, setDomainStatus] = useState(""); // "", "available", "taken", "checking"
+
 
   const fetchDeployments = async () => {
     try {
@@ -49,14 +52,31 @@ const Deployments = () => {
     fetchDeployments();
   };
 
-  // useEffect(() => {
-  //   fetchDeployments();
-  // }, []);
+ 
     useEffect(() => {
     fetchDeployments(); // initial load
     const interval = setInterval(fetchDeployments, 10000); // every 10 sec
     return () => clearInterval(interval); // cleanup
   }, []);
+
+  const checkDomainAvailability = async () => {
+  if (!domain.trim()) return;
+  try {
+    setDomainStatus("checking");
+    const res = await axios.get(`deployment/check-domain?domain=${domain}`);
+    if (res.data.available) {
+      setDomainStatus("available");
+    } else {
+      setDomainStatus("taken");
+    }
+  } catch (err) {
+    console.error("Domain check error:", err);
+    setDomainStatus("taken");
+  }
+};
+
+
+  
 
   const handleDeploy = async () => {
     try {
@@ -104,13 +124,33 @@ const Deployments = () => {
               onChange={(e) => setForm({ ...form, projectName: e.target.value })}
               className="border px-4 py-2 rounded-md w-full focus:ring-2 focus:ring-[#00477B] outline-none"
             />
-            <input
+            {/* <input
               type="text"
               placeholder="Domain (e.g., spectra.ai)"
               value={form.domain}
               onChange={(e) => setForm({ ...form, domain: e.target.value })}
               className="border px-4 py-2 rounded-md w-full focus:ring-2 focus:ring-[#00477B] outline-none"
-            />
+            /> */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Enter domain e.g spectra.ai"
+                value={domain}
+                onChange={(e) => setDomain(e.target.value)}
+                onBlur={checkDomainAvailability}
+                className="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#00477B]"
+              />
+              {domainStatus === "checking" && (
+                <span className="absolute top-2 right-4 text-sm text-gray-500">Checking...</span>
+              )}
+              {domainStatus === "available" && (
+                <span className="absolute top-2 right-4 text-sm text-green-600">✅ Available</span>
+              )}
+              {domainStatus === "taken" && (
+                <span className="absolute top-2 right-4 text-sm text-red-600">❌ Taken</span>
+              )}
+            </div>
+
             <select
               value={form.framework}
               onChange={(e) => setForm({ ...form, framework: e.target.value })}
