@@ -18,7 +18,7 @@ const DeploymentSchema = new mongoose.Schema(
     },
     environment: {
       type: String,
-      enum: ["Production", "staging", "development"],
+      enum: ["Production", "Staging", "Development"],
       default: "production",
     },
     domain: {

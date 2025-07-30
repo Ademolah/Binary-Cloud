@@ -5,6 +5,15 @@ import toast from "react-hot-toast";
 import { FaTerminal, FaPlusCircle } from "react-icons/fa";
 import { motion } from "framer-motion";
 
+import { FaSync } from "react-icons/fa";
+import BuildTerminal from "../../components/BuildTerminal";
+import DeploymentHistory from "../../components/DeploymentHistory";
+
+
+
+
+
+
 const statusColors = {
   building: "bg-yellow-100 text-yellow-700",
   deployed: "bg-green-100 text-green-700",
@@ -14,6 +23,8 @@ const statusColors = {
 
 const Deployments = () => {
   const [deployments, setDeployments] = useState([]);
+  
+
   const [form, setForm] = useState({
     projectName: "",
     domain: "",
@@ -33,8 +44,18 @@ const Deployments = () => {
     }
   };
 
-  useEffect(() => {
+    // Manual refresh button
+  const handleRefresh = () => {
     fetchDeployments();
+  };
+
+  // useEffect(() => {
+  //   fetchDeployments();
+  // }, []);
+    useEffect(() => {
+    fetchDeployments(); // initial load
+    const interval = setInterval(fetchDeployments, 10000); // every 10 sec
+    return () => clearInterval(interval); // cleanup
   }, []);
 
   const handleDeploy = async () => {
@@ -121,6 +142,44 @@ const Deployments = () => {
         </div>
       )}
 
+      <div className="flex justify-between items-center mb-4">
+  <h2 className="text-xl font-bold text-[#00477B]">Your Deployments</h2>
+  <button
+    onClick={handleRefresh}
+    className="flex items-center gap-2 text-sm px-3 py-2 bg-white border border-gray-300 rounded-md hover:bg-gray-100 transition"
+  >
+    <FaSync className="animate-spin-slow text-[#00477B]" />
+    Refresh
+  </button>
+</div>
+
+  {/* GitHub Integration Placeholder */}
+  <div className="bg-white rounded-xl shadow p-6 mt-10 w-full">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex items-center gap-4">
+        <img
+          src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg"
+          alt="GitHub"
+          className="w-10 h-10"
+        />
+        <div>
+          <h2 className="text-lg font-semibold text-[#00477B]">Connect Your GitHub</h2>
+          <p className="text-sm text-gray-600">
+            Link your GitHub account to automatically deploy from your repositories.
+          </p>
+        </div>
+      </div>
+      <button
+        className="px-5 py-2 bg-[#00477B] hover:bg-[#00345d] text-white rounded-md text-sm font-medium transition"
+        onClick={() => toast("GitHub integration coming soon")}
+      >
+        Connect GitHub
+      </button>
+    </div>
+  </div>
+
+
+
       {/* Deployment List */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {deployments.map((deploy) => (
@@ -156,6 +215,14 @@ const Deployments = () => {
             )}
           </div>
         ))}
+      </div>
+
+      <DeploymentHistory/>
+
+      {/* Terminal Log */}
+      <div className="mt-10">
+        <h3 className="text-lg font-semibold text-[#00477B] mb-2">Build Logs</h3>
+        <BuildTerminal />
       </div>
     </div>
   );
